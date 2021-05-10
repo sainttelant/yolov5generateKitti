@@ -28,7 +28,7 @@ dict_label = dict(b)
 
 # 将txt中坐标还原到原始照片的坐标
 def restore_coordinate(yolo_bbox, image_w, image_h):
-    print("yolo_bbox:",yolo_bbox)
+    #print("yolo_bbox:",yolo_bbox)
     box_w = float(yolo_bbox[3]) * image_w
     box_h = float(yolo_bbox[4]) * image_h
     x_mid = float(yolo_bbox[1]) * image_w + 1
@@ -83,7 +83,7 @@ def restore_results(images_folder, labels_folder):
 if __name__ == '__main__':
     s = time.time()
     imagePath = 'data/images'  # 原本的yolo数据格式的images所在的文件夹，根据自己的修改
-    labelPath = 'runs/detect/exp8/labels'  # 原本的yolo数据格式的labels所在的文件夹，根据自己的修改
+    labelPath = 'runs/detect/exp2/labels'  # 原本的yolo数据格式的labels所在的文件夹，根据自己的修改
     print('----数据转换开始---')
 
     restore_results(imagePath, labelPath)
