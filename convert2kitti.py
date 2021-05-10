@@ -35,8 +35,10 @@ def restore_coordinate(yolo_bbox, image_w, image_h):
     y_mid = float(yolo_bbox[2]) * image_h + 1
     xmin = int(x_mid - box_w / 2)
     xmax = int(x_mid + box_w / 2)
-    ymin = int(y_mid - box_h / 2) + 5  # 增加了一个偏移的量5；
-    ymax = int(y_mid + box_h / 2) + 5
+    #ymin = int(y_mid - box_h / 2) + 5  # 增加了一个偏移的量5；
+    #ymax = int(y_mid + box_h / 2) + 5
+    ymin = int(y_mid - box_h / 2)   # 增加了一个偏移的量5；
+    ymax = int(y_mid + box_h / 2) 
     return [xmin, ymin, xmax, ymax]
 
 
