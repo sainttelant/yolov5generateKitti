@@ -50,10 +50,8 @@ def restore_noneed_img(labels_folder,width,height):
         #print('name',name)
         with open(os.path.join(labels_folder, label), 'r') as f:
             #print("process label:",os.path.join(labels_folder,label))
-         
             w = width
             h = height
-            
             info = f.readline()
             #print("info:",info)
             lines = ""
@@ -78,6 +76,41 @@ def restore_noneed_img(labels_folder,width,height):
             # if cv2.waitKey(100) & 0XFF == ord('q'):
             #      break
         f.close()
+
+
+def splittingData(labels_folder,image_width,image_height,savepath,savefile):
+    absfilepath = os.path.join(savepath,savefile)
+    with open(absfilepath,"w") as file:
+        print("打开新建的label文件{}".format(absfilepath))
+
+        #listdir 顺序是乱序排列的，所以要文件名排序
+        labels = os.listdir(labels_folder)
+        labels.sort(key=lambda x:int(x.split(".")[0].split("_")[1]))
+        frame_num = 0
+        for label in labels:
+            with open(os.path.join(labels_folder, label), 'r') as f:
+                #print("process label:",os.path.join(labels_folder,label))
+                w = image_width
+                h = image_height
+                info = f.readline()
+                #print("info:",info)
+                lines = ''
+                while info:
+                    label = list(info.split(' '))
+                    print("label:",label)
+                    labelname = dict_label[label[0]]
+                    #print("labelname:",labelname)
+                    ori_box = restore_coordinate(label, w, h)
+                    new_info = str(frame_num)+","+"-1," + str(ori_box[0]) + ',' + str(ori_box[1]) + ',' + str(ori_box[2]-ori_box[0]) + ',' + str(ori_box[3]-ori_box[1]) \
+                            + ','+str(label[5])
+                    lines += new_info     
+                    info = f.readline()    
+                file.writelines(lines)      
+            f.close()
+            frame_num+=1
+    file.close()
+
+
 
 # 获取照片的labels文件和images文件，并生成新的标签文件
 def restore_results(images_folder, labels_folder):
@@ -124,13 +157,18 @@ if __name__ == '__main__':
     labelPath = 'runs/detect/exp/labels'  # 原本的yolo数据格式的labels所在的文件夹，根据自己的修改
     print('----数据转换开始---')
 
-    try:
+    command = input("选则传统的生成分开的KITTI 选1，选择生成抛洒物检测的数据选2\n")
+    if command == "1":
+        try:
+            # 默认还是带着图反推，其实没必要，只是延续之前的操作
+            restore_results(imagePath, labelPath)
+        except:
+            print("无图输入，直接使用默认的图片大小回复kitti format data")
+            restore_noneed_img(labelPath, 960,720)
+    elif command == "2":
+        print("选择生成抛洒物的标签")
+        splittingData(labelPath,960,720,"kittilabel","shiyan.txt")
 
-        restore_results(imagePath, labelPath)
-    except:
-        print("无图输入，直接使用默认的图片大小回复kitti format data")
-        restore_noneed_img(labelPath, 1920,1080)
-    
 
     print('---耗时：{:.3f}ms'.format(time.time() - s))
     print('---数据转换成功---')
