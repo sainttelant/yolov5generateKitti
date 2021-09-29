@@ -43,6 +43,42 @@ def restore_coordinate(yolo_bbox, image_w, image_h):
 
 
 
+def restore_noneed_img(labels_folder,width,height):
+    labels = os.listdir(labels_folder)
+    for label in labels:
+        name = label.split('.')[0]
+        #print('name',name)
+        with open(os.path.join(labels_folder, label), 'r') as f:
+            #print("process label:",os.path.join(labels_folder,label))
+         
+            w = width
+            h = height
+            
+            info = f.readline()
+            #print("info:",info)
+            lines = ""
+            while info:
+                label = list(info.split(' '))
+                #print("label:",label)
+                labelname = dict_label[label[0]]
+                #print("labelname:",labelname)
+                ori_box = restore_coordinate(label, w, h)
+                new_info = labelname + ' ' + '0.00' + ' ' + '0' + ' ' + '0.00' + ' ' \
+                           + str(ori_box[0]) + ' ' + str(ori_box[1]) + ' ' + str(ori_box[2]) + ' ' + str(ori_box[3]) \
+                           + ' ' + '0.00' + ' ' + '0.00' + ' ' + '0.00' + ' ' + '0.00' + ' ' + '0.00' \
+                           + ' ' + '0.00' + ' ' + '0.00' + '\n'
+                lines += new_info
+                info = f.readline()
+            with open(os.path.join(kittiPath, name + '.txt'), 'w') as fn:
+                fn.writelines(lines)
+            fn.close()
+            # 将转换的坐标值绘制到原始图片上，并显示查看
+            # cv2.rectangle(img, (ori_box[0], ori_box[1]), (ori_box[2], ori_box[3]), (0, 255, 255), 2)
+            # cv2.imshow('Transfer_label', img)
+            # if cv2.waitKey(100) & 0XFF == ord('q'):
+            #      break
+        f.close()
+
 # 获取照片的labels文件和images文件，并生成新的标签文件
 def restore_results(images_folder, labels_folder):
     labels = os.listdir(labels_folder)
@@ -88,7 +124,13 @@ if __name__ == '__main__':
     labelPath = 'runs/detect/exp/labels'  # 原本的yolo数据格式的labels所在的文件夹，根据自己的修改
     print('----数据转换开始---')
 
-    restore_results(imagePath, labelPath)
+    try:
+
+        restore_results(imagePath, labelPath)
+    except:
+        print("无图输入，直接使用默认的图片大小回复kitti format data")
+        restore_noneed_img(labelPath, 1920,1080)
+    
 
     print('---耗时：{:.3f}ms'.format(time.time() - s))
     print('---数据转换成功---')
