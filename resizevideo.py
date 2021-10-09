@@ -7,7 +7,7 @@ def reizevideo(video, resize_width, resize_height):
      cap = cv2.VideoCapture(video)#读取视频文件
      fourcc = cv2.VideoWriter_fourcc(*'mp4v')
  
-     out = cv2.VideoWriter('newrize.mp4',fourcc, 20.0, (resize_width,resize_height),True)   
+     out = cv2.VideoWriter('newrize300_300.mp4',fourcc, 20.0, (resize_width,resize_height),True)   
      while cap.isOpened():
         ok, frame = cap.read()  # 读取一帧数据
         if not ok:#如果读取失败，直接break
@@ -28,4 +28,4 @@ def reizevideo(video, resize_width, resize_height):
 
 if __name__=="__main__":
     print("开始修改视频尺寸")
-    reizevideo("data/images/out_723.mp4",960,720)
+    reizevideo("data/images/out.mp4",300,300)

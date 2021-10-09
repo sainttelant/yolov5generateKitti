@@ -88,6 +88,7 @@ def splittingData(labels_folder,image_width,image_height,savepath,savefile):
         labels.sort(key=lambda x:int(x.split(".")[0].split("_")[1]))
         frame_num = 0
         for label in labels:
+            print(">>>>>>>>>>current name:{}<<<<<<<<<<<".format(label))
             with open(os.path.join(labels_folder, label), 'r') as f:
                 #print("process label:",os.path.join(labels_folder,label))
                 w = image_width
@@ -164,10 +165,15 @@ if __name__ == '__main__':
             restore_results(imagePath, labelPath)
         except:
             print("无图输入，直接使用默认的图片大小回复kitti format data")
-            restore_noneed_img(labelPath, 960,720)
+            w = input("因为无图，所以需要手动输入图片的宽度：")
+            h = input("因为无图所以要手动输入图片的高度：")
+
+            restore_noneed_img(labelPath, w,h)
     elif command == "2":
         print("选择生成抛洒物的标签")
-        splittingData(labelPath,960,720,"kittilabel","shiyan.txt")
+        wp = input("因为无图，所以需要手动输入图片的宽度：")
+        hp = input("因为无图所以要手动输入图片的高度：")
+        splittingData(labelPath,int(wp),int(hp),"kittilabel","shiyan.txt")
 
 
     print('---耗时：{:.3f}ms'.format(time.time() - s))
